@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Show the login page by default
   app.querySelector(".login-page").style.display = "block";
 
-  app.querySelector("#send-message").addEventListener("click", function () {
+  function sendMessage() {
     let messageInput = app.querySelector("#message-input");
     let message = messageInput.value.trim();
 
@@ -48,6 +48,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     messageInput.value = "";
     messageInput.focus(); // Keep focus on the input field after sending a message
+  }
+
+  app.querySelector("#send-message").addEventListener("click", sendMessage);
+  app.querySelector("#message-input").addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault(); // Prevent the default Enter key behavior (e.g., line break in textarea)
+      sendMessage();
+    }
   });
 
   app.querySelector("#exit-chat").addEventListener("click", function () {

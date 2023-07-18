@@ -15,8 +15,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  max-width: 1200px;
-  padding: 20px;
+
+  padding: 80px;
   box-sizing: border-box;
   border-radius: 10px;
   box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
@@ -184,11 +184,12 @@ h2 {
   background-size: cover;
   flex: 5;
   display: flex;
-  flex-direction:column;
+  flex-direction: column;
   height: 100vh;
-  max-width:1800px;
-  
-}  
+  width: 100vh; /* Add this line to make the chat screen occupy the entire width */
+  max-width: 100vh; /* Add this line to limit the maximum width to the viewport width */
+}
+
 
 .active {
   display: flex;
@@ -273,18 +274,6 @@ h2 {
   margin-top: auto;
 }
 
-.emoji-icon {
-  display: inline-block;
-  width: 30px;
-  height: 30px;
-  background-image: url('pics/images.png'); /* Replace with the path to your emoji icon image */
-  background-size: cover;
-  background-position: center;
-  background-color: none;
-  cursor: pointer;
-  margin-right: 10px; 
-}
-
 
 #message-input {
   flex: 1;
@@ -309,7 +298,7 @@ h2 {
   background-color: #0d8050;
 }
 
-@media only screen and (max-width: 1200px) {
+@media only screen and (max-width: 200px) {
   .app {
     padding: 10px;
   }
