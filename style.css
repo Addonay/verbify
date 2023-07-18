@@ -6,7 +6,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
   background: linear-gradient(#30142b, #2772a1);
 }
 
@@ -15,13 +15,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-
-  padding: 80px;
+  padding: 40px;
   box-sizing: border-box;
   border-radius: 10px;
   box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
+  width: 100%;
+  max-width: 400px;
 }
-
 
 .login-page {
   padding: 8% 0 0;
@@ -29,16 +29,12 @@ body {
 }
 
 .form {
-  position: fixed;
-  z-index: 1;
   text-align: center;
-  width: 400px;
   padding: 40px;
-  transform: translate(-50%, -50%);
-  background: rgba(0, 0, 0, 0.5);
   box-sizing: border-box;
   box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
   border-radius: 10px;
+  background: rgba(0, 0, 0, 0.5);
 }
 
 .form input {
@@ -182,14 +178,11 @@ h2 {
   background-image: url("pics/aaa.jpg");
   background-repeat: no-repeat;
   background-size: cover;
-  flex: 5;
   display: flex;
   flex-direction: column;
   height: 100vh;
-  width: 100vh; /* Add this line to make the chat screen occupy the entire width */
-  max-width: 100vh; /* Add this line to limit the maximum width to the viewport width */
+  max-width: 100%;
 }
-
 
 .active {
   display: flex;
@@ -220,10 +213,12 @@ h2 {
   display: flex;
   justify-content: flex-start;
   margin-left: auto;
-  max-width: 15%;
   background-color: #dcf8c6;
   padding: 10px;
   border-radius: 10px;
+  max-width: 80%;
+  align-self: flex-end;
+  margin-bottom: 10px;
 }
 
 .my-message .name {
@@ -239,12 +234,12 @@ h2 {
 .other-message {
   display: flex;
   justify-content: flex-start;
-  max-width: 15%;
   background-color: #fff;
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 10px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  max-width: 80%;
 }
 
 .other-message .name {
@@ -274,7 +269,6 @@ h2 {
   margin-top: auto;
 }
 
-
 #message-input {
   flex: 1;
   padding: 15px;
@@ -298,18 +292,30 @@ h2 {
   background-color: #0d8050;
 }
 
-@media only screen and (max-width: 200px) {
-  .app {
-    padding: 10px;
+@media only screen and (max-width: 600px) {
+  body {
+    align-items: flex-start;
   }
-  
-  .login-page,
-  .chat-screen {
-    width: 100%;
+
+  .app {
+    padding: 20px;
+    max-width: 100%;
   }
 
   .form {
-    width: 100%;
-    max-width: 400px;
+    padding: 20px;
+  }
+
+  .messages {
+    padding: 5px;
+  }
+
+  .my-message,
+  .other-message {
+    max-width: 100%;
+  }
+
+  .update {
+    padding: 5px;
   }
 }
