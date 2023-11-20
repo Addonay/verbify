@@ -1,102 +1,133 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const app = document.querySelector(".app");
+  const appContainer = document.getElementById("app");
   const socket = io();
+  const { useState } = React;
+  const { TextField, Button, Box, Typography } = mui/material; // Replace 'mui' with the correct Material-UI import
 
-  let uname;
+  let uname = "";
 
-  app.querySelector(".login-form").addEventListener("submit", function (event) {
-    event.preventDefault();
+  const LoginPage = () => (
+    <Box className="login-page" display="flex" alignItems="center" justifyContent="center" height="100vh">
+      <Box className="form" textAlign="center" p={3} boxShadow={3} borderRadius={10} bgcolor="rgba(255, 255, 255, 0.8)">
+        <form className="login-form" onSubmit={handleLogin}>
+          <Typography variant="h4" gutterBottom>
+            Login
+          </Typography>
+          <TextField
+            label="Username"
+            variant="outlined"
+            value={uname}
+            onChange={(e) => setUname(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+          <Button type="submit" variant="contained" color="primary">
+            Sign In
+          </Button>
+        </form>
+      </Box>
+    </Box>
+  );
 
-    let usernameInput = app.querySelector("#username");
-    let username = usernameInput.value.trim();
-
-    if (username.length >= 4) {
-      uname = username;
-      socket.emit("newuser", uname);
-      app.querySelector(".login-page").style.display = "none";
-      app.querySelector(".chat-screen").style.display = "flex";
-    } else {
-      alert("Username should be four letters or more.");
-    }
-
-    usernameInput.value = "";
-  });
-
-  // Hide the chat screen initially
-  app.querySelector(".chat-screen").style.display = "none";
-  
-  // Show the login page by default
-  app.querySelector(".login-page").style.display = "block";
-
-  function sendMessage() {
-    let messageInput = app.querySelector("#message-input");
-    let message = messageInput.value.trim();
-
-    if (message.length === 0) {
-      return;
-    }
-
-    renderMessage("my", {
-      username: uname,
-      text: message,
-    });
-
-    socket.emit("chat", {
-      username: uname,
-      text: message,
-    });
-
-    messageInput.value = "";
-    messageInput.focus(); // Keep focus on the input field after sending a message
-  }
-
-  app.querySelector("#send-message").addEventListener("click", sendMessage);
-  app.querySelector("#message-input").addEventListener("keydown", function (event) {
-    if (event.key === "Enter") {
-      event.preventDefault(); // Prevent the default Enter key behavior (e.g., line break in textarea)
-      sendMessage();
-    }
-  });
-
-  app.querySelector("#exit-chat").addEventListener("click", function () {
-    socket.emit("exituser", uname);
-    window.location.href = window.location.origin;
-  });
-
-  function renderMessage(type, message) {
-    let messageContainer = app.querySelector(".messages");
-    let messageElement = document.createElement("div");
-    messageElement.className = "message";
+  const Message = ({ type, message }) => {
     if (type === "my") {
-      messageElement.classList.add("my-message");
-      messageElement.innerHTML = `
-        <div>
-          <div class="name">You</div>
-          <div class="text">${message.text}</div>
-        </div>
-      `;
+      return (
+        <Box display="flex" justifyContent="flex-end" marginBottom={2}>
+          <Box bgcolor="#dcf8c6" borderRadius={10} padding={1} maxWidth="80%">
+            <Typography variant="body2" fontWeight="bold" marginBottom={1}>
+              You
+            </Typography>
+            <Typography variant="body1">{message.text}</Typography>
+          </Box>
+        </Box>
+      );
     } else if (type === "other") {
-      messageElement.classList.add("other-message");
-      messageElement.innerHTML = `
-        <div>
-          <div class="name">${message.username}</div>
-          <div class="text">${message.text}</div>
-        </div>
-      `;
+      return (
+        <Box display="flex" justifyContent="flex-start" marginBottom={2}>
+          <Box bgcolor="#fff" boxShadow={1} borderRadius={10} padding={1} maxWidth="80%">
+            <Typography variant="body2" fontWeight="bold" marginBottom={1}>
+              {message.username}
+            </Typography>
+            <Typography variant="body1">{message.text}</Typography>
+          </Box>
+        </Box>
+      );
     } else if (type === "update") {
-      messageElement.classList.add("update");
-      messageElement.innerText = message;
+      return (
+        <Typography variant="body2" fontStyle="italic" color="#888" textAlign="center" padding={1}>
+          {message}
+        </Typography>
+      );
     }
+  };
 
-    messageContainer.appendChild(messageElement);
-    messageContainer.scrollTop = messageContainer.scrollHeight;
-  }
+  const ChatScreen = () => {
+    const [messages, setMessages] = useState([]);
+    const [messageInput, setMessageInput] = useState("");
 
-  socket.on("chat", function (message) {
-    renderMessage("other", message);
-  });
+    const handleLogin = (event) => {
+      event.preventDefault();
 
-  socket.on("update", function (message) {
-    renderMessage("update", message);
-  });
+      if (uname.length >= 4) {
+        socket.emit("newuser", uname);
+        // Switch to the chat screen
+        ReactDOM.render(<ChatScreen />, appContainer);
+      } else {
+        alert("Username should be four letters or more.");
+      }
+    };
+
+    const handleExitChat = () => {
+      socket.emit("exituser", uname);
+      window.location.href = window.location.origin;
+    };
+
+    const handleSendMessage = () => {
+      if (messageInput.trim() === "") {
+        return;
+      }
+
+      const newMessage = {
+        type: "my",
+        text: messageInput,
+      };
+
+      socket.emit("chat", newMessage);
+
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+
+      setMessageInput("");
+    };
+
+    return (
+      <Box className="chat-screen" backgroundImage="url('pics/aaa.jpg')" backgroundRepeat="no-repeat" backgroundSize="cover">
+        <Box className="header" bgcolor="#075e54" color="#fff" padding={2} display="flex" alignItems="center" justifyContent="space-between">
+          <Typography variant="h6">Chatroom</Typography>
+          <Button variant="outlined" onClick={handleExitChat}>
+            Exit
+          </Button>
+        </Box>
+        <Box className="messages" flex={1} padding={2} overflowY="auto">
+          {messages.map((message, index) => (
+            <Message key={index} type={message.type} message={message} />
+          ))}
+        </Box>
+        <Box className="typebox" display="flex" alignItems="center" padding={2} backgroundColor="transparent">
+          <TextField
+            id="message-input"
+            placeholder="Type Message"
+            variant="outlined"
+            fullWidth
+            value={messageInput}
+            onChange={(e) => setMessageInput(e.target.value)}
+          />
+          <Button variant="contained" color="primary" onClick={handleSendMessage}>
+            Send
+          </Button>
+        </Box>
+      </Box>
+    );
+  };
+
+  ReactDOM.render(<LoginPage />, appContainer);
 });

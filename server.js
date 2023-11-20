@@ -6,7 +6,7 @@ const server = require("http").createServer(app);
 
 const io = require("socket.io")(server);
 
-app.use(express.static(path.join));
+app.use(express.static(path.join(__dirname, "pics")));
 
 io.on("connection", function (socket) {
   socket.on("newuser", function (username) {
@@ -22,4 +22,6 @@ io.on("connection", function (socket) {
   });
 });
 
-server.listen(5000);
+server.listen(5000, () => {
+  console.log("Server is running on http://localhost:5000");
+});
